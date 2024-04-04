@@ -1,6 +1,6 @@
-public class Association<K, V> {
-    private K key;
-    private V value;
+public class Association<K, V> implements Comparable<Association<K, V>> {
+    private final K key;
+    private final V value;
 
     public Association(K key, V value) {
         this.key = key;
@@ -16,7 +16,21 @@ public class Association<K, V> {
     }
 
     @Override
-    public String toString() {
-        return "(" + key + ", " + value + ")";
+    public int compareTo(Association<K, V> other) {
+        return this.key.compareTo(other.key);
     }
+
+    @Override
+public boolean equals(Object o) {
+    if (o == this) {
+        return true;
+    }
+
+    if (!(o instanceof Association)) {
+        return false;
+    }
+
+    Association other = (Association) o;
+    return this.key.equals(other.key) && this.value.equals(other.value);
+}
 }
