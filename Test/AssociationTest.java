@@ -1,16 +1,36 @@
-public class AssociationTest {
-    public static void main(String[] args) {
-        Association<String, Integer> association1 = new Association<>("key1", 1);
-        Association<String, Integer> association2 = new Association<>("key2", 2);
-        Association<String, Integer> association3 = new Association<>("key3", 3);
+public class Association<K, V> implements Comparable<Association<K, V>> {
+    private final K key;
+    private final V value;
 
-        // Test getKey() and getValue()
-        System.out.println("Key of association1: " + association1.getKey());
-        System.out.println("Value of association1: " + association1.getValue());
-
-        // Test compareTo()
-        System.out.println("Comparison between association1 and association2: " + association1.compareTo(association2));
-        System.out.println("Comparison between association2 and association3: " + association2.compareTo(association3));
-        System.out.println("Comparison between association3 and association1: " + association3.compareTo(association1));
+    public Association(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
+    }
+
+    @Override
+    public int compareTo(Association<K, V> other) {
+        return this.key.compareTo(other.key);
+    }
+
+    @Override
+public boolean equals(Object o) {
+    if (o == this) {
+        return true;
+    }
+
+    if (!(o instanceof Association)) {
+        return false;
+    }
+
+    Association other = (Association) o;
+    return this.key.equals(other.key) && this.value.equals(other.value);
+}
 }
