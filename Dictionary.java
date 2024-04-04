@@ -1,6 +1,6 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Dictionary {
     private BinaryTree<Association<String, String>> englishBST;
@@ -11,22 +11,38 @@ public class Dictionary {
         englishBST = new BinaryTree<>();
         spanishBST = new BinaryTree<>();
         frenchBST = new BinaryTree<>();
+
+        buildDictionary("diccionario.txt");
     }
 
-    public void loadDictionary(String filename) {
-        try {
-            File file = new File(filename);
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                String[] line = scanner.nextLine().split(",");
-                englishBST.insert(new Association<>(line[0], line[1]));
-                spanishBST.insert(new Association<>(line[1], line[2]));
-                frenchBST.insert(new Association<>(line[2], line[0]));
+    private void buildDictionary(String filename) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    Association<String, String> englishAssoc = new Association<>(parts[0], parts[1]);
+                    Association<String, String> spanishAssoc = new Association<>(parts[1], parts[2]);
+                    Association<String, String> frenchAssoc = new Association<>(parts[2], parts[0]);
+
+                    englishBST.insert(englishAssoc);
+                    spanishBST.insert(spanishAssoc);
+                    frenchBST.insert(frenchAssoc);
+                }
             }
-            scanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found: " + e.getMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public void addAssociation(String english, String spanish, String french) {
+        Association<String, String> englishAssoc = new Association<>(english, spanish);
+        Association<String, String> spanishAssoc = new Association<>(spanish, french);
+        Association<String, String> frenchAssoc = new Association<>(french, english);
+    
+        englishBST.insert(englishAssoc);
+        spanishBST.insert(spanishAssoc);
+        frenchBST.insert(frenchAssoc);
     }
 
     public BinaryTree<Association<String, String>> getEnglishBST() {
@@ -39,5 +55,15 @@ public class Dictionary {
 
     public BinaryTree<Association<String, String>> getFrenchBST() {
         return frenchBST;
+    }
+
+    public static void main(String[] args) {
+        Dictionary dictionary = new Dictionary();
+        System.out.println("English BST:");
+        System.out.println(dictionary.getEnglishBST().toString());
+        System.out.println("Spanish BST:");
+        System.out.println(dictionary.getSpanishBST().toString());
+        System.out.println("French BST:");
+        System.out.println(dictionary.getFrenchBST().toString());
     }
 }
